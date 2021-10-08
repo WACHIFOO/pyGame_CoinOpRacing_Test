@@ -1,16 +1,50 @@
-# This is a sample Python script.
+import os
 
-# Press Mayús+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+from classes.game import Game
+from classes.player import Player
+# from classes.ball import Ball
+# from classes.blocks import Blocks
+
+import pygame
 
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
-
-
-# Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    print_hi('PyCharm')
+    game = Game()
+    player = Player()
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    game.flip()
+    x = 250
+    y = 250
+    while game.playing:
+        # Controlamos si se pulsa cerrar
+        game.trigger_quit_game()
+
+        # Controlamos la tecla pulsada
+        pressed = pygame.key.get_pressed()
+        if pressed[pygame.K_DOWN]:
+            game.pause = True
+
+        # Si el juego esta pausado lo reiniciamos
+        if game.pause:
+            if pressed[pygame.K_UP]:
+                game = Game()
+                player = Player()
+                x = 250
+                y = 250
+
+        # Iniciamos el latido
+        if not game.pause:
+            game.start_hearthbeat()
+
+        # Obtenemos la tecla pulsada y movemos el jugador
+        player.movement(pressed)
+
+        if not game.pause:
+            # Renderizamos el jugador
+            player.draw(game.screen)
+
+        # Finalizamos el latido
+        if not game.pause:
+            game.end_hearthbeat()
+
+    game.quit_game()
